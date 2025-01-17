@@ -20,23 +20,14 @@ def create_user(name, dob):
 
 def update_user(identifier, is_id, new_name, new_dob):
     new_dob_str = new_dob.strftime('%Y-%m-%d')
-    if is_id:
-        payload = {"name": new_name, "dob": new_dob_str}
-        response = requests.put(f"{API_URL}/user/{identifier}", json=payload)
-    else:
-        payload = {"name": new_name, "dob": new_dob_str}
-        response = requests.put(f"{API_URL}/user/{identifier}", json=payload)
+    payload = {"name": new_name, "dob": new_dob_str}
+    response = requests.put(f"{API_URL}/user/{identifier}", json=payload)
     return response.json()
 
 
 def delete_user(identifier, is_id):
     try:
-        if is_id:
-            response = requests.delete(f"{API_URL}/user/{identifier}")
-        else:
-            response = requests.delete(f"{API_URL}/user/{identifier}")
-
-
+        response = requests.delete(f"{API_URL}/user/{identifier}")
         response.raise_for_status()
         if response.status_code == 200:
             return response.json()
@@ -62,6 +53,7 @@ with st.form(key="add_user"):
         result = create_user(name, dob)
         st.success(result["message"])
 
+st.divider()
 # View users
 st.header("Users List")
 users = get_users()
@@ -73,6 +65,8 @@ if st.button("Refresh Table"):
     users = get_users()
     df = pd.DataFrame(users)
     st.rerun()
+
+st.divider()
 
 # Update User
 st.header("Update User")
@@ -105,6 +99,8 @@ elif update_search_criterion == "Name":
             if submit_button:
                 result = update_user(selected_name, False, new_name, new_dob)
                 st.success(result["message"])
+
+st.divider()
 
 # Delete User
 st.header("Delete User")
